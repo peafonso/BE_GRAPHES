@@ -21,7 +21,7 @@ import java.util.EnumSet;
  *
  */
 public class AccessRestrictions {
-
+/*Commentaire*/
     /**
      * Enumeration representing the available transport modes.
      *
