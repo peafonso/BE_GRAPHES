@@ -1,7 +1,7 @@
 package org.insa.graphs.algorithm.shortestpath;
 import org.insa.graphs.model.Node;
 
-public class Label {	
+public class Label implements Comparable<Label>{	
 	/*  sommet courant : sommet associé à ce label (sommet ou numéro de sommet).
     marque : booléen, vrai lorsque le coût min de ce sommet est définitivement connu par l'algorithme.
     coût : valeur courante du plus court chemin depuis l'origine vers le sommet.
@@ -13,16 +13,14 @@ public class Label {
 	private boolean marque;
 	private double cost;
 	private Node pere;
+	private boolean dansletas;
 	
-	public Label() {
-		
-	}
-	
-	public Label (Node sommet, boolean marque) {
+	public Label (Node sommet) {
 		this.setCourant(sommet);
 		this.setMarque(false);
 		this.cost=Double.POSITIVE_INFINITY;
 		this.setPere(null);
+		this.setDansletas(false);
 	}
 	
 	public double getCost() {
@@ -57,9 +55,31 @@ public class Label {
 		this.pere = pere;
 	}
 	
-	
+	public double getTotalCost () {
+		return this.cost;
+	}
 	 
+	public int compareTo (Label autre) {
+		int fin;
+		if (this.getTotalCost()>autre.getTotalCost()) {
+			fin=1;
+		}
+		else if (this.getTotalCost()<autre.getTotalCost()) {
+			fin=-1;
+		}
+		else {
+			fin=0;
+		}
+		return fin;
+	}
 
+	public boolean isDansletas() {
+		return dansletas;
+	}
+
+	public void setDansletas(boolean dansletas) {
+		this.dansletas = dansletas;
+	}
 	
 	
 }

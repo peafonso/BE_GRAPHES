@@ -1,14 +1,24 @@
 package org.insa.graphs.algorithm.shortestpath;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 
+import org.insa.graphs.algorithm.AbstractSolution.Status;
+import org.insa.graphs.algorithm.utils.BinaryHeap;
 import org.insa.graphs.model.Arc;
 import org.insa.graphs.model.Graph;
+import org.insa.graphs.model.Node;
+import org.insa.graphs.model.Path;
 
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
-	protected Label label;
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
+    }
+    
+    //Création d'une méthode d'instanciation de label pour faciliter le passage 
+    // label à labestar en A* (2ème argument nécessaire au labelstar)
+    protected Label newlab (Node node, ShortestPathData data) {
+    	return new Label(node);
     }
 
     @Override
@@ -16,33 +26,120 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
   
         // Retrieve the graph.
         final ShortestPathData data = getInputData();
-        ShortestPathSolution solution = null;
         Graph graph = data.getGraph();
  
         final int nbNodes = graph.size();
 	        
-	    // Initialize array of distances.
-        double[] distances = new double[nbNodes];
-        Arrays.fill(distances, Double.POSITIVE_INFINITY);
-        distances[data.getOrigin().getId()] = 0;
+	    // Initialisation tableau de labels
+        Label[] tablelabels = new Label[nbNodes];
+        
+        // Initialisation tas de labels
+		BinaryHeap<Label> tas = new BinaryHeap<Label>();
 
-        // Notify observers about the first event (origin processed).
-        notifyOriginProcessed(data.getOrigin());
-
-        // Initialize array of predecessors.
+        // Initialize array of predecessors
         Arc[] predecessorArcs = new Arc[nbNodes];
 
         //Initialisation
-        label= new Label();
+       Label first= newlab(data.getOrigin(), data);
+       tablelabels[first.getCourant().getId()] = first;
+       tas.insert(first);
+       first.setDansletas(true);
+       first.setCost(0);
+       boolean fin=false;
         
-        //Iteration
-        
-        
-        
-        
-        
-        
-        return solution;
-    }
+       // Notify observers about the first event (origin processed).
+       notifyOriginProcessed(data.getOrigin());
+       
+       //Iteration
+       //Tant qu'il existe des sommets non marqués
+       while (!(tas.isEmpty())&& !fin) {
+    	   //Extractmin(Tas)
+    	   Label x=tas.deleteMin();
+    	   x.setMarque(true);
+    	   notifyNodeMarked(x.getCourant());
+    	   
+    	   if (x.getCourant() == data.getDestination()) {
+    		   fin = true;
+    	   }
 
+           for (Arc arc: x.getCourant().getSuccessors()) {
+        	   // Small test to check allowed roads...
+               if (!data.isAllowed(arc)) {
+                   continue;
+               }
+               Node nody = arc.getDestination();
+
+				Label y = tablelabels[nody.getId()];
+				
+				//On atteint un nouveau noeud qu'on place dans le tableau des labels
+				if (y == null) {
+					notifyNodeReached(arc.getDestination());
+					y= newlab(nody, data);
+					tablelabels[nody.getId()] = y;
+				}
+
+        	   //Si le noeud n'est pas marqué
+        	   if (!(y.isMarque())) {
+        		   if((y.getCost()>(x.getCost()+data.getCost(arc)))	|| (y.getCost()==Float.POSITIVE_INFINITY)){
+						y.setCost(x.getCost()+(float)data.getCost(arc));
+						y.setPere(x.getCourant());
+						
+						if(y.isDansletas()) {
+							tas.remove(y);
+						}
+						/* Sinon on l'ajoute dans le tas */
+						else {
+							y.setDansletas(true);
+
+						}
+						tas.insert(y);
+						predecessorArcs[arc.getDestination().getId()] = arc;
+						
+					
+        			   }
+        		   }
+        	   
+           }
+       }
+       
+       ShortestPathSolution solution = null;
+
+       
+       // Destination has no predecessor, the solution is infeasible...
+       if (predecessorArcs[data.getDestination().getId()] == null) {
+           solution = new ShortestPathSolution(data, Status.INFEASIBLE);
+       }
+       else {
+
+           // The destination has been found, notify the observers.
+           notifyDestinationReached(data.getDestination());
+
+           // Create the path from the array of predecessors...
+           ArrayList<Arc> arcs = new ArrayList<>();
+           Arc arc = predecessorArcs[data.getDestination().getId()];
+           while (arc != null) {
+               arcs.add(arc);
+               arc = predecessorArcs[arc.getOrigin().getId()];
+           }
+
+           // Reverse the path...
+           Collections.reverse(arcs);
+
+           // Create the final solution.
+           solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
+           
+           /*if (solution.getPath().isValid()) {
+        	   System.out.println("Path is valid");
+           }
+
+           if (Math.round(tablelabels[data.getDestination().getId()].getCost()) == Math.round(solution.getPath().getLength())) {
+        	   System.out.println("Calculated cost of destination label is the same as the path length. Well done.");
+        	}*/
+       }
+
+       return solution;
+
+    }
 }
+
+
