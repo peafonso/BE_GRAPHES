@@ -8,6 +8,8 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         super(data);
     }
     
+    //Redéfinition de newlab dans djikstra pour utiliser désormais des labelstar
+    @Override
     protected Label newlab (Node node, ShortestPathData data) {
     	return new LabelStar(node, data);
     }

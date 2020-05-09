@@ -2,6 +2,7 @@ package org.insa.graphs.algorithm.shortestpath;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.utils.BinaryHeap;
@@ -57,16 +58,20 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
     	   Label x=tas.deleteMin();
     	   x.setMarque(true);
     	   notifyNodeMarked(x.getCourant());
+    	   //Vérification couts des labels marqués croissants
+    	   //System.out.println("Node "+x.getCourant().getId()+" COUT: "+x.getCost());
     	   
     	   if (x.getCourant() == data.getDestination()) {
     		   fin = true;
     	   }
-
+    	   
+    	   int succ=0;
            for (Arc arc: x.getCourant().getSuccessors()) {
         	   // Small test to check allowed roads...
                if (!data.isAllowed(arc)) {
                    continue;
                }
+               succ++;
                Node nody = arc.getDestination();
 
 				Label y = tablelabels[nody.getId()];
@@ -96,10 +101,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 						predecessorArcs[arc.getDestination().getId()] = arc;
 						
 					
-        			   }
         		   }
+        	   }
         	   
            }
+           //Vérification nombre de successeurs explorés à chaque itération = nb de successeurs d'un node
+           //System.out.println("expl: "+succ+" tr:"+x.getCourant().getNumberOfSuccessors());
        }
        
        ShortestPathSolution solution = null;
@@ -136,7 +143,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	   System.out.println("Calculated cost of destination label is the same as the path length. Well done.");
         	}*/
        }
-
+       
+       //Vérification de la solution avec méthodes de path
+       //Validité
+       System.out.println("PATH VALIDE "+solution.getPath().isValid());
+       //Plus court chemin
+       System.out.println("PCC "+solution.getPath().equals(Path.createShortestPathFromNodes(graph, data.getGraph().getNodes())));
        return solution;
 
     }

@@ -17,8 +17,14 @@ public class LabelStar extends Label {
 		double result;
 		//MODE TIME
 		if (data.getMode()==AbstractInputData.Mode.TIME) {
+			int speed;
 			/*The maximum speed associated with input data is different from the maximum speed associated with graph (accessible via Graph.getGraphInformation())*/
-			int speed= Math.max(data.getMaximumSpeed(), data.getGraph().getGraphInformation().getMaximumSpeed());
+			if (data.getMaximumSpeed()==-1) {
+				speed=data.getGraph().getGraphInformation().getMaximumSpeed();
+			}
+			else {
+				speed= Math.max(data.getMaximumSpeed(), data.getGraph().getGraphInformation().getMaximumSpeed());
+			}
 			result=(Point.distance(sommet.getPoint(), data.getDestination().getPoint()))/(speed/3.6);
 			
 		}
@@ -30,6 +36,8 @@ public class LabelStar extends Label {
 	}
 	
 
+	@Override
+	//Redéfinition
 	public double getTotalCost () {
 		return this.costest+this.getCost();
 	}
