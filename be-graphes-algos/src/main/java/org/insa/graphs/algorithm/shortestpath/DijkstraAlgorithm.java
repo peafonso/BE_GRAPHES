@@ -105,8 +105,11 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	   }
         	   
            }
+           //Vérification taille du tas
+           //System.out.println("taille tas: "+tas.size());
+           //System.out.println("tasvalide? "+tas.isValid());
            //Vérification nombre de successeurs explorés à chaque itération = nb de successeurs d'un node
-           //System.out.println("expl: "+succ+" tr:"+x.getCourant().getNumberOfSuccessors());
+           // System.out.println("expl: "+succ+" tr:"+x.getCourant().getNumberOfSuccessors());
        }
        
        ShortestPathSolution solution = null;
@@ -135,20 +138,17 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
            // Create the final solution.
            solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
            
-           /*if (solution.getPath().isValid()) {
-        	   System.out.println("Path is valid");
+           //Vérification avec méthode classe path
+           if (solution.getPath().isValid()) {
+        	   System.out.println("Path validé");
            }
 
            if (Math.round(tablelabels[data.getDestination().getId()].getCost()) == Math.round(solution.getPath().getLength())) {
-        	   System.out.println("Calculated cost of destination label is the same as the path length. Well done.");
-        	}*/
+        	   System.out.println("longueur du chemin validé");
+        	}
        }
        
-       //Vérification de la solution avec méthodes de path
-       //Validité
-       System.out.println("PATH VALIDE "+solution.getPath().isValid());
-       //Plus court chemin
-       System.out.println("PCC "+solution.getPath().equals(Path.createShortestPathFromNodes(graph, data.getGraph().getNodes())));
+     
        return solution;
 
     }
