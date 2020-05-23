@@ -43,18 +43,6 @@ public class LabelStar extends Label {
 	}
 
 	
-	public int compareTo (LabelStar autre) {
-		int fin;
-		if (this.getTotalCost()>autre.getTotalCost()) {
-			fin=1;
-		}
-		else if (this.getTotalCost()<autre.getTotalCost()) {
-			fin=-1;
-		}
-		else {
-			fin=0;
-		}
-		return fin;
-	}
+	
 
 }

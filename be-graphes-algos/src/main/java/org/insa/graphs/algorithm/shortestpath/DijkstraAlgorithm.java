@@ -24,7 +24,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
     @Override
     protected ShortestPathSolution doRun() {
-  
+    	
+    	long start=System.currentTimeMillis();
         // Retrieve the graph.
         final ShortestPathData data = getInputData();
         Graph graph = data.getGraph();
@@ -137,18 +138,20 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
            // Create the final solution.
            solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
-           
+
            //Vérification avec méthode classe path
-           if (solution.getPath().isValid()) {
+           /*if (solution.getPath().isValid()) {
         	   System.out.println("Path validé");
            }
 
            if (Math.round(tablelabels[data.getDestination().getId()].getCost()) == Math.round(solution.getPath().getLength())) {
         	   System.out.println("longueur du chemin validé");
-        	}
+        	}*/
        }
        
-     
+       long time= System.currentTimeMillis()-start;
+      // System.out.println("Effectué en "+time+ "ms");
+    
        return solution;
 
     }

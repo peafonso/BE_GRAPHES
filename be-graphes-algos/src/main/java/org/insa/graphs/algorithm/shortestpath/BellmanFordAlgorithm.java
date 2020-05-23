@@ -18,7 +18,7 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
 
     @Override
     protected ShortestPathSolution doRun() {
-
+    	 long start= System.currentTimeMillis();
         // Retrieve the graph.
         ShortestPathData data = getInputData();
         Graph graph = data.getGraph();
@@ -94,6 +94,8 @@ public class BellmanFordAlgorithm extends ShortestPathAlgorithm {
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
         }
 
+        long time= System.currentTimeMillis()-start;
+       // System.out.println("Effectué en "+time+ "ms");
         return solution;
     }
 
